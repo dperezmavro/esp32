@@ -1,4 +1,4 @@
-#include <DHT.h>
+
 #include <WiFi.h>
 #include <esp_now.h>
 #include <USBHID.h>
@@ -8,7 +8,6 @@ USBHIDKeyboard Keyboard;
 
 // include common functionality
 #include <../common.h>
-#include <stratagems.h>
 
 data_packet command;
 

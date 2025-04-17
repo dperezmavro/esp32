@@ -1,4 +1,4 @@
-#define LED_BUILTIN 2
+#define LED_BUILTIN 48
 #define LED_BLINK_DURATION 250
 
 struct data_packet {
