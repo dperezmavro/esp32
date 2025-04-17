@@ -1,6 +1,10 @@
 #include <DHT.h>
 #include <WiFi.h>
 #include <esp_now.h>
+#include <USBHID.h>
+#include "USBHIDKeyboard.h"
+
+USBHIDKeyboard Keyboard;
 
 // include common functionality
 #include <../common.h>
@@ -27,6 +31,9 @@ void setup() {
   }
 
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+
+  Keyboard.begin();
+  // USB.begin();
 }
 
 // callback function that will be executed when data is received
@@ -36,6 +43,10 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   Serial.print("Bytes received: ");
   Serial.println(len);
   Serial.printf("button %d, pinmode %d\n", command.button_number, command.pin_position);
+
+  Keyboard.print("You pressed the button ");
+  Keyboard.print(command.button_number);
+  Keyboard.println(".");
 }
 
 void loop() {
