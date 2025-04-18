@@ -1,31 +1,51 @@
-#include <WiFi.h>
-#include <esp_now.h>
+/*
+  Sender is ESP8266
+*/
 
+#include <ESP8266WiFi.h>
+#include <espnow.h>
 
 // at 100 we start getting 30% transmission failures
 #define TRANSMISSION_INTERVAL 200
 
-#define BUTTON_PIN 5
+#define BUTTON_PIN 14
 
 // include common functionality
-#include <../common.h>
+// #include <../common.h>
+#ifndef LED_BUTTON_FEEDBACK
+#define LED_BUTTON_FEEDBACK 2
+#endif
+#define EXTERNAL_LED 13
+#define LED_BLINK_DURATION 250
+
+struct data_packet {
+  uint8_t button_number;
+  uint8_t pin_position;
+};
+
+void blink_led() {
+  digitalWrite(LED_BUTTON_FEEDBACK, HIGH);  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(EXTERNAL_LED, HIGH);         // turn the LED on (HIGH is the voltage level)
+  delay(LED_BLINK_DURATION);                // wait for a second
+  digitalWrite(EXTERNAL_LED, LOW);          // turn the LED off by making the voltage LOW
+}
+
 
 data_packet command;
 
 // receiver MAC
 uint8_t receiverMac[] = { 0xE4, 0xB3, 0x23, 0xF7, 0xFF, 0xA4 };
-// peer information
-esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
   Serial.print("Last Packet Send Status: ");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  Serial.println(sendStatus == 0 ? "Delivery Success" : "Delivery Fail");
 }
 
 void setup() {
   // built in led for feedback
-  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUTTON_FEEDBACK, OUTPUT);
+  pinMode(EXTERNAL_LED, OUTPUT);
 
   // serial for debugging
   Serial.begin(115200);
@@ -35,48 +55,44 @@ void setup() {
 
   // read mac address
   WiFi.mode(WIFI_STA);
-  WiFi.STA.begin();
+  WiFi.mode(WIFI_STA);
 
-
-  // Init ESP-NOW
-  if (esp_now_init() != ESP_OK) {
+  if (esp_now_init() != 0) {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
-
-  // Once ESPNow is successfully Init, we will register for Send CB to
-  // get the status of Trasnmitted packet
+  esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
   esp_now_register_send_cb(OnDataSent);
+  esp_now_add_peer(receiverMac, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
 
+  // feedback to know everything booted fine
+  blink_builtin_led(100);
+  blink_builtin_led(100);
+  blink_builtin_led(100);
+  blink_builtin_led(100);
+  blink_builtin_led(100);
+  blink_builtin_led(100);
+}
 
-  // Register peer
-  memcpy(peerInfo.peer_addr, receiverMac, 6);
-  peerInfo.channel = 0;
-  peerInfo.encrypt = false;
-
-  // Add peer
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
+void blink_builtin_led(uint8_t d) {
+  digitalWrite(LED_BUTTON_FEEDBACK, LOW);  // turn the LED on (HIGH is the voltage level)
+  delay(d);
+  digitalWrite(LED_BUTTON_FEEDBACK, HIGH);  // turn the LED on (HIGH is the voltage level)
 }
 
 void send_command() {
-  esp_err_t result = esp_now_send(receiverMac, (uint8_t *)&command, sizeof(command));
-
-  if (result == ESP_OK) {
-    blink_led();
-  } else {
-    Serial.println("Error sending the data");
-  }
-
+  digitalWrite(EXTERNAL_LED, HIGH);  // turn the LED on (HIGH is the voltage level)
+  esp_now_send(receiverMac, (uint8_t *)&command, sizeof(command));
   delay(TRANSMISSION_INTERVAL);
+  digitalWrite(EXTERNAL_LED, LOW);  // turn the LED off by making the voltage LOW
 }
 
 void loop() {
   bool switchState = digitalRead(BUTTON_PIN);  // Read switch
 
   if (switchState == LOW) {
+    Serial.println("clicked button");
+    // TODO (dio): populate these with real reads
     command.button_number = 123;
     command.pin_position = 1;
     send_command();
