@@ -93,7 +93,7 @@ void loop() {
   if (switchState == LOW) {
     Serial.println("clicked button");
     // TODO (dio): populate these with real reads
-    command.button_number = 123;
+    command.button_number = 2;
     command.pin_position = 1;
     send_command();
   }
