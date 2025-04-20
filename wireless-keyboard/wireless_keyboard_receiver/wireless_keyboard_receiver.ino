@@ -70,8 +70,6 @@ void setup() {
           Initialise stratagem manager 
   */
   sm = new StratagemManager(stratagems);
-
-  Serial.flush();
 }
 
 // callback function that will be executed when data is received
