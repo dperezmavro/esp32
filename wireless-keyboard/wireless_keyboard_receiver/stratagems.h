@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <tuple>
+
 #ifndef STRATAGEMS_UTILS
 #define STRATAGEMS_UTILS
 
