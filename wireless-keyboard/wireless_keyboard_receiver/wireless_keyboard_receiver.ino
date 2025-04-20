@@ -1,19 +1,19 @@
 
 #include <WiFi.h>
 #include <esp_now.h>
-// #include <USBHID.h>
-// #include "USBHIDKeyboard.h"
-// USBHIDKeyboard Keyboard;
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
 
+// #include <USBHID.h>
+// #include "USBHIDKeyboard.h"
+// USBHIDKeyboard Keyboard;
 
 // include common functionality
 #include "../common.h"
 #include "stratagems.h"
 
-
+const char *stratagems;
 data_packet command;
 
 void setup() {
@@ -63,7 +63,7 @@ void setup() {
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
 
-  const char *stratagems = readFile(SD, STRATAGEMS_FILE);
+  stratagems = readFile(SD, STRATAGEMS_FILE);
   StratagemManager sm(stratagems);
 }
 
@@ -74,6 +74,8 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   Serial.print(F("Bytes received: "));
   Serial.println(len);
   Serial.printf(F("button %d, pinmode %d\n"), command.button_number, command.pin_position);
+
+  StratagemManager sm(stratagems);
 
   // Keyboard.print("You pressed the button ");
   // Keyboard.print(command.button_number);
