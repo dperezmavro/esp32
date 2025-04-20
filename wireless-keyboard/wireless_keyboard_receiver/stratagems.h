@@ -11,7 +11,7 @@
 class StratagemManager {
 public:
   StratagemManager(const char *as);
-  const char *get_stratagem(uint8_t button, uint8_t stratagem_slot);
+  std::string get_stratagem(uint8_t button, uint8_t stratagem_slot);
 
 private:
   std::string all_stratagems_raw;
@@ -21,7 +21,7 @@ private:
 };
 
 StratagemManager::StratagemManager(const char *as) {
-  Serial.printf(F("initialising with stratagems:\n%s\n"), as);
+  Serial.printf(F("Initialising with stratagems:\n%s\n"), as);
   this->all_stratagems_raw = std::string(as);
 
   std::tuple<std::string, std::string> button_1 = this->read_line();
@@ -54,7 +54,7 @@ std::vector<std::string> StratagemManager::split_line(std::string in) {
   return parts;
 }
 
-const char *StratagemManager::get_stratagem(uint8_t button_number, uint8_t stratagem_slot) {
+std::string StratagemManager::get_stratagem(uint8_t button_number, uint8_t stratagem_slot) {
   if (button_number + 1 > NUM_STRATAGEMS) {
     return NULL;
   }
@@ -64,10 +64,10 @@ const char *StratagemManager::get_stratagem(uint8_t button_number, uint8_t strat
   }
 
   if (stratagem_slot) {
-    return std::get< 1 >(this->stratagem_pairs[button_number]).c_str();
+    return std::get< 1 >(this->stratagem_pairs[button_number]);
   }
 
-  return std::get< 0 >(this->stratagem_pairs[button_number]).c_str();
+  return std::get< 0 >(this->stratagem_pairs[button_number]);
 }
 
 #endif
