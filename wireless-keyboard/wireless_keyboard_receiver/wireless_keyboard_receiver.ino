@@ -14,6 +14,7 @@
 #include "stratagems.h"
 
 const char *stratagems;
+StratagemManager *sm;
 data_packet command;
 
 void setup() {
@@ -64,18 +65,19 @@ void setup() {
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
 
   stratagems = readFile(SD, STRATAGEMS_FILE);
-  StratagemManager sm(stratagems);
+  sm = new StratagemManager(stratagems);
 }
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   blink_led();
   memcpy(&command, incomingData, sizeof(command));
-  Serial.print(F("Bytes received: "));
-  Serial.println(len);
-  Serial.printf(F("button %d, pinmode %d\n"), command.button_number, command.pin_position);
-
-  StratagemManager sm(stratagems);
+  Serial.printf(
+    F("Bytes received: %d - button %d, pinmode %d, stratagem %s\n"),
+    len,
+    command.button_number,
+    command.pin_position,
+    sm->get_stratagem(command.button_number, command.pin_position));
 
   // Keyboard.print("You pressed the button ");
   // Keyboard.print(command.button_number);
