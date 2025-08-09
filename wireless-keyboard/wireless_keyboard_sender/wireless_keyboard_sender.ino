@@ -18,31 +18,37 @@
 #define EXTERNAL_LED 13
 #define LED_BLINK_DURATION 250
 
-struct data_packet {
+struct data_packet
+{
   uint8_t button_number;
   uint8_t pin_position;
 };
 
-void blink_led() {
-  digitalWrite(LED_BUTTON_FEEDBACK, HIGH);  // turn the LED on (HIGH is the voltage level)
-  digitalWrite(EXTERNAL_LED, HIGH);         // turn the LED on (HIGH is the voltage level)
-  delay(LED_BLINK_DURATION);                // wait for a second
-  digitalWrite(EXTERNAL_LED, LOW);          // turn the LED off by making the voltage LOW
+void blink_led()
+{
+  digitalWrite(LED_BUTTON_FEEDBACK,
+               HIGH);  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(EXTERNAL_LED,
+               HIGH);         // turn the LED on (HIGH is the voltage level)
+  delay(LED_BLINK_DURATION);  // wait for a second
+  digitalWrite(EXTERNAL_LED,
+               LOW);  // turn the LED off by making the voltage LOW
 }
-
 
 data_packet command;
 
 // receiver MAC
-uint8_t receiverMac[] = { 0xE4, 0xB3, 0x23, 0xF7, 0xFF, 0xA4 };
+uint8_t receiverMac[] = {0xE4, 0xB3, 0x23, 0xF7, 0xFF, 0xA4};
 
 // callback when data is sent
-void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
+void OnDataSent(uint8_t* mac_addr, uint8_t sendStatus)
+{
   Serial.print("Last Packet Send Status: ");
   Serial.println(sendStatus == 0 ? "Delivery Success" : "Delivery Fail");
 }
 
-void setup() {
+void setup()
+{
   // built in led for feedback
   pinMode(LED_BUTTON_FEEDBACK, OUTPUT);
   pinMode(EXTERNAL_LED, OUTPUT);
@@ -57,7 +63,8 @@ void setup() {
   WiFi.mode(WIFI_STA);
   WiFi.mode(WIFI_STA);
 
-  if (esp_now_init() != 0) {
+  if (esp_now_init() != 0)
+  {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
@@ -74,27 +81,35 @@ void setup() {
   blink_builtin_led(100);
 }
 
-void blink_builtin_led(uint8_t d) {
-  digitalWrite(LED_BUTTON_FEEDBACK, LOW);  // turn the LED on (HIGH is the voltage level)
+void blink_builtin_led(uint8_t d)
+{
+  digitalWrite(LED_BUTTON_FEEDBACK,
+               LOW);  // turn the LED on (HIGH is the voltage level)
   delay(d);
-  digitalWrite(LED_BUTTON_FEEDBACK, HIGH);  // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUTTON_FEEDBACK,
+               HIGH);  // turn the LED on (HIGH is the voltage level)
 }
 
-void send_command() {
-  digitalWrite(EXTERNAL_LED, HIGH);  // turn the LED on (HIGH is the voltage level)
-  esp_now_send(receiverMac, (uint8_t *)&command, sizeof(command));
+void send_command()
+{
+  digitalWrite(EXTERNAL_LED,
+               HIGH);  // turn the LED on (HIGH is the voltage level)
+  esp_now_send(receiverMac, (uint8_t*)&command, sizeof(command));
   delay(TRANSMISSION_INTERVAL);
-  digitalWrite(EXTERNAL_LED, LOW);  // turn the LED off by making the voltage LOW
+  digitalWrite(EXTERNAL_LED,
+               LOW);  // turn the LED off by making the voltage LOW
 }
 
-void loop() {
+void loop()
+{
   bool switchState = digitalRead(BUTTON_PIN);  // Read switch
 
-  if (switchState == LOW) {
+  if (switchState == LOW)
+  {
     Serial.println("clicked button");
     // TODO (dio): populate these with real reads
     command.button_number = 2;
-    command.pin_position = 1;
+    command.pin_position  = 1;
     send_command();
   }
 }
