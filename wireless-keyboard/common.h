@@ -1,3 +1,6 @@
+#ifndef _COMMON_H
+#define _COMMON_H
+
 #define LED_BUILTIN 48
 #define LED_BLINK_DURATION 250
 
@@ -11,3 +14,5 @@ void blink_led() {
     delay(LED_BLINK_DURATION);                       // wait for a second
     digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
 }
+
+#endif

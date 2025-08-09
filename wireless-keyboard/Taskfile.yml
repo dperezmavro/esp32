@@ -6,4 +6,4 @@ tasks:
 
   fmt:
     cmds:
-      - clang-format --style=file -i **/*.h **/*.ino
+      - clang-format --style=file -i **/*.h **/*.cpp **/*.ino

@@ -19,18 +19,27 @@ data_packet command;
 
 void setup()
 {
-  // serial for output
   Serial.begin(115200);
+  Serial.printf(F("[*] Starting setup\n"));
 
-  // LED for feedBACK
-  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.print("MOSI: ");
+  Serial.println(MOSI);
+  Serial.print("MISO: ");
+  Serial.println(MISO);
+  Serial.print("SCK: ");
+  Serial.println(SCK);
+  Serial.print("SS: ");
+  Serial.println(SS);
 
-  /*
-  
-  ESP NOW AND WIFI SETUP
+  setup_sd_card();
+  setuip_esp_now();
 
-  */
-  // read mac address
+  // stratagems = readFile(SD, STRATAGEMS_FILE);
+  // sm = new StratagemManager(stratagems);
+}
+
+void setuip_esp_now()
+{
   WiFi.mode(WIFI_STA);
   WiFi.STA.begin();
   // esp32s3 receiver E4:B3:23:F7:FF:A4
@@ -41,16 +50,14 @@ void setup()
     return;
   }
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+}
 
-  /*
-  
-  SD card setup
-
-  */
-  if (!SD.begin())
+void setup_sd_card()
+{
+  while (!SD.begin())
   {
     Serial.println(F("Card Mount Failed"));
-    return;
+    sleep(1);
   }
   uint8_t cardType = SD.cardType();
 
@@ -67,13 +74,6 @@ void setup()
 
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
-
-  stratagems = readFile(SD, STRATAGEMS_FILE);
-
-  /*
-          Initialise stratagem manager 
-  */
-  sm = new StratagemManager(stratagems);
 }
 
 // callback function that will be executed when data is received
