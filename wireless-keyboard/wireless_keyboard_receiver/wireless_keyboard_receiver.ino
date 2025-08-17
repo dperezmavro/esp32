@@ -11,7 +11,8 @@
 
 // include common functionality
 #include "../common.h"
-#include "stratagem-manager.h"
+#include "./setup.h"
+#include "./stratagem-manager.h"
 
 const char* stratagems;
 StratagemManager* sm;
@@ -22,15 +23,6 @@ void setup()
   Serial.begin(115200);
   Serial.printf(F("[*] Starting setup\n"));
 
-  Serial.print("MOSI: ");
-  Serial.println(MOSI);
-  Serial.print("MISO: ");
-  Serial.println(MISO);
-  Serial.print("SCK: ");
-  Serial.println(SCK);
-  Serial.print("SS: ");
-  Serial.println(SS);
-
   setup_sd_card();
   setuip_esp_now();
 
@@ -38,6 +30,7 @@ void setup()
 
   stratagems = readFile(SD, STRATAGEMS_FILE);
   sm         = new StratagemManager(stratagems);
+  sm->print();
 }
 
 void setuip_esp_now()
@@ -55,33 +48,6 @@ void setuip_esp_now()
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
   Serial.println(F("[+] Finished ESP-NOW setup"));
-}
-
-void setup_sd_card()
-{
-  Serial.println(F("[*] Starting SD card setup"));
-  SPI.begin(SCK, MISO, MOSI, SS);
-  while (!SD.begin(SS))
-  {
-    Serial.println(F("Card Mount Failed"));
-    sleep(1);
-  }
-  uint8_t cardType = SD.cardType();
-
-  if (cardType == CARD_NONE)
-  {
-    Serial.println(F("No SD card attached"));
-    return;
-  }
-  if (cardType != CARD_SD)
-  {
-    Serial.printf(F("UNKNOWN card type %d\n"), cardType);
-    return;
-  }
-
-  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-  Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
-  Serial.println(F("[+] Finished SD card setup"));
 }
 
 // callback function that will be executed when data is received

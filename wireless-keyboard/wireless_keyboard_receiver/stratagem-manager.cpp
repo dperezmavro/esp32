@@ -1,4 +1,5 @@
-#include "./stratagems.h"
+#include "./stratagem-manager.h"
+#include <cstdio>
 
 StratagemManager::StratagemManager(const char* as)
 {
@@ -57,4 +58,13 @@ std::string StratagemManager::get_stratagem(uint8_t button_number,
   return std::get<0>(this->stratagem_pairs[button_number]);
 }
 
-void StratagemManager::print() {}
+void StratagemManager::print()
+{
+  for (int i = 0; i < NUM_STRATAGEMS; i++)
+  {
+    printf("Stratagems of %d: %s - %s\n",
+           i,
+           this->get_stratagem(i, 0).c_str(),
+           this->get_stratagem(i, 1).c_str());
+  }
+}
