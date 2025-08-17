@@ -11,7 +11,7 @@
 
 // include common functionality
 #include "../common.h"
-#include "stratagems.h"
+#include "stratagem-manager.h"
 
 const char* stratagems;
 StratagemManager* sm;
@@ -34,12 +34,15 @@ void setup()
   setup_sd_card();
   setuip_esp_now();
 
-  // stratagems = readFile(SD, STRATAGEMS_FILE);
-  // sm = new StratagemManager(stratagems);
+  Serial.println(F("[+] Setup complete, reading stratagems"));
+
+  stratagems = readFile(SD, STRATAGEMS_FILE);
+  sm         = new StratagemManager(stratagems);
 }
 
 void setuip_esp_now()
 {
+  Serial.println(F("[*] Starting ESP-NOW setup"));
   WiFi.mode(WIFI_STA);
   WiFi.STA.begin();
   // esp32s3 receiver E4:B3:23:F7:FF:A4
@@ -50,11 +53,15 @@ void setuip_esp_now()
     return;
   }
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+
+  Serial.println(F("[+] Finished ESP-NOW setup"));
 }
 
 void setup_sd_card()
 {
-  while (!SD.begin())
+  Serial.println(F("[*] Starting SD card setup"));
+  SPI.begin(SCK, MISO, MOSI, SS);
+  while (!SD.begin(SS))
   {
     Serial.println(F("Card Mount Failed"));
     sleep(1);
@@ -74,6 +81,7 @@ void setup_sd_card()
 
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
+  Serial.println(F("[+] Finished SD card setup"));
 }
 
 // callback function that will be executed when data is received
@@ -114,6 +122,8 @@ const char* readFile(fs::FS& fs, const char* path)
   Serial.println(F("Reading from file"));
   String stratagems = file.readString();
   file.close();
+
+  Serial.println(F("Stratagems read correctly"));
 
   return stratagems.c_str();
 }

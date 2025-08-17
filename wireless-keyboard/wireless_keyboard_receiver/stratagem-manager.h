@@ -15,6 +15,7 @@ class StratagemManager
  public:
   StratagemManager(const char* as);
   std::string get_stratagem(uint8_t button, uint8_t stratagem_slot);
+  void StratagemManager::print();
 
  private:
   std::string all_stratagems_raw;

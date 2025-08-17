@@ -56,3 +56,5 @@ std::string StratagemManager::get_stratagem(uint8_t button_number,
 
   return std::get<0>(this->stratagem_pairs[button_number]);
 }
+
+void StratagemManager::print() {}
