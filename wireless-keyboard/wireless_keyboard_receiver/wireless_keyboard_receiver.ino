@@ -1,22 +1,16 @@
 
 #include <FS.h>
 #include <SD.h>
-#include <SPI.h>
-#include <WiFi.h>
-#include <esp_now.h>
 
 // #include <USBHID.h>
 // #include "USBHIDKeyboard.h"
 // USBHIDKeyboard Keyboard;
 
-// include common functionality
-#include "../common.h"
 #include "./setup.h"
 #include "./stratagem-manager.h"
 
 const char* stratagems;
 StratagemManager* sm;
-data_packet command;
 
 void setup()
 {
@@ -31,42 +25,6 @@ void setup()
   stratagems = readFile(SD, STRATAGEMS_FILE);
   sm         = new StratagemManager(stratagems);
   sm->print();
-}
-
-void setuip_esp_now()
-{
-  Serial.println(F("[*] Starting ESP-NOW setup"));
-  WiFi.mode(WIFI_STA);
-  WiFi.STA.begin();
-  // esp32s3 receiver E4:B3:23:F7:FF:A4
-  Serial.printf(F("MAC Address: %s\n"), WiFi.macAddress().c_str());
-  if (esp_now_init() != ESP_OK)
-  {
-    Serial.println(F("Error initializing ESP-NOW"));
-    return;
-  }
-  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
-
-  Serial.println(F("[+] Finished ESP-NOW setup"));
-}
-
-// callback function that will be executed when data is received
-void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len)
-{
-  blink_led();
-  memcpy(&command, incomingData, sizeof(command));
-  auto stgm = sm->get_stratagem(command.button_number, command.pin_position);
-  Serial.printf(F("Bytes received: %d - button %d, pinmode %d, stratagem %s, "
-                  "command size %d\n"),
-                len,
-                command.button_number,
-                command.pin_position,
-                stgm.c_str(),
-                stgm.length());
-
-  // Keyboard.print("You pressed the button ");
-  // Keyboard.print(command.button_number);
-  // Keyboard.println(".");
 }
 
 const char* readFile(fs::FS& fs, const char* path)
