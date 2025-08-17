@@ -108,8 +108,8 @@ void loop()
   {
     Serial.println("clicked button");
     // TODO (dio): populate these with real reads
-    command.button_number = 4;
-    command.pin_position  = 1;
+    command.button_number = 3;
+    command.pin_position  = 0;
     send_command();
   }
 }
