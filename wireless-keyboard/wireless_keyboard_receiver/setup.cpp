@@ -60,7 +60,15 @@ void setuip_esp_now()
 void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len)
 {
   memcpy(&command, incomingData, sizeof(command));
-  auto stgm = sm->get_stratagem(command.button_number, command.pin_position);
+  std::string stgm =
+      sm->get_stratagem(command.button_number, command.pin_position);
+  if (stgm.empty())
+  {
+    Serial.printf("[-] received invalida stratagem code: %d:%d\n",
+                  command.button_number,
+                  command.pin_position);
+    return;
+  }
   Serial.printf(F("Bytes received: %d - button %d, pinmode %d, stratagem %s, "
                   "command size %d\n"),
                 len,

@@ -1,5 +1,7 @@
-#include "./stratagem-manager.h"
+#include <HardwareSerial.h>
 #include <cstdio>
+
+#include "./stratagem-manager.h"
 
 StratagemManager::StratagemManager(const char* as)
 {
@@ -40,14 +42,15 @@ std::vector<std::string> StratagemManager::split_line(std::string in)
 std::string StratagemManager::get_stratagem(uint8_t button_number,
                                             uint8_t stratagem_slot)
 {
+  std::string default_str;
   if (button_number + 1 > NUM_STRATAGEMS)
   {
-    return NULL;
+    return default_str;
   }
 
   if (stratagem_slot > 1)
   {
-    return NULL;
+    return default_str;
   }
 
   if (stratagem_slot)
@@ -62,9 +65,9 @@ void StratagemManager::print()
 {
   for (int i = 0; i < NUM_STRATAGEMS; i++)
   {
-    printf("Stratagems of %d: %s - %s\n",
-           i,
-           this->get_stratagem(i, 0).c_str(),
-           this->get_stratagem(i, 1).c_str());
+    Serial.printf("Stratagems of %d: %s - %s\n",
+                  i,
+                  this->get_stratagem(i, 0).c_str(),
+                  this->get_stratagem(i, 1).c_str());
   }
 }
