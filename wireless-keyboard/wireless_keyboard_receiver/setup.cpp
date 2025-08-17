@@ -1,3 +1,4 @@
+#include <FS.h>
 #include <HardwareSerial.h>
 #include <SD.h>
 #include <SPI.h>
@@ -71,4 +72,29 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len)
   // Keyboard.print("You pressed the button ");
   // Keyboard.print(command.button_number);
   // Keyboard.println(".");
+}
+
+const char* read_file(fs::FS& fs, const char* path)
+{
+  Serial.printf(F("Opening file: %s\n"), path);
+
+  File file = fs.open(path);
+  if (!file)
+  {
+    Serial.println(F("Failed to open file for reading"));
+    return NULL;
+  }
+
+  if (!file.available())
+  {
+    Serial.println(F("File is not available"));
+    return NULL;
+  }
+  Serial.println(F("Reading from file"));
+  String stratagems = file.readString();
+  file.close();
+
+  Serial.println(F("Stratagems read correctly"));
+
+  return stratagems.c_str();
 }
