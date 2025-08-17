@@ -44,7 +44,7 @@ void setuip_esp_now()
   Serial.println(F("[*] Starting ESP-NOW setup"));
   WiFi.mode(WIFI_STA);
   WiFi.STA.begin();
-  // esp32s3 receiver E4:B3:23:F7:FF:A4
+
   Serial.printf(F("MAC Address: %s\n"), WiFi.macAddress().c_str());
   if (esp_now_init() != ESP_OK)
   {

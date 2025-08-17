@@ -38,7 +38,7 @@ void blink_led()
 data_packet command;
 
 // receiver MAC
-uint8_t receiverMac[] = {0xE4, 0xB3, 0x23, 0xF7, 0xFF, 0xA4};
+uint8_t receiverMac[] = {0xB4, 0x3A, 0x45, 0xA9, 0x1C, 0x0C};
 
 // callback when data is sent
 void OnDataSent(uint8_t* mac_addr, uint8_t sendStatus)
@@ -108,7 +108,7 @@ void loop()
   {
     Serial.println("clicked button");
     // TODO (dio): populate these with real reads
-    command.button_number = 2;
+    command.button_number = 4;
     command.pin_position  = 1;
     send_command();
   }
