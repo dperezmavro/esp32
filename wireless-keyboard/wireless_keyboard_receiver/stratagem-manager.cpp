@@ -5,18 +5,14 @@
 
 StratagemManager::StratagemManager(const char* as)
 {
-  // Serial.printf(F("Initialising with stratagems:\n%s\n"), as);
+  Serial.printf(F("Initialising with stratagems:\n%s\n"), as);
   this->all_stratagems_raw = std::string(as);
+  for (int i = 0; i < NUM_STRATAGEMS; i++)
+  {
 
-  std::tuple<std::string, std::string> button_1 = this->read_line();
-  std::tuple<std::string, std::string> button_2 = this->read_line();
-  std::tuple<std::string, std::string> button_3 = this->read_line();
-  std::tuple<std::string, std::string> button_4 = this->read_line();
-
-  this->stratagem_pairs[0] = button_1;
-  this->stratagem_pairs[1] = button_2;
-  this->stratagem_pairs[2] = button_3;
-  this->stratagem_pairs[3] = button_4;
+    std::tuple<std::string, std::string> button = this->read_line();
+    this->stratagem_pairs[i]                    = button;
+  }
 }
 
 std::tuple<std::string, std::string> StratagemManager::read_line()
