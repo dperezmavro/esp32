@@ -78,8 +78,9 @@ void OnDataRecv(const uint8_t* mac, const uint8_t* incomingData, int len)
                 command.pin_position,
                 stgm.c_str(),
                 stgm.length());
-  
-                dm->write_bottom_line(stgm.c_str);
+
+  dm->write_bottom_line(stgm.c_str());
+
   // Keyboard.print("You pressed the button ");
   // Keyboard.print(command.button_number);
   // Keyboard.println(".");

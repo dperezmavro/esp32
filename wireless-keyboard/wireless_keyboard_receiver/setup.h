@@ -1,9 +1,11 @@
 #ifndef _SETUP_H
 #define _SETUP_H
 
+#include "./display-manager.h"
 #include "./stratagem-manager.h"
 
 extern StratagemManager* sm;
+extern DisplayManager* dm;
 
 const char* read_file(fs::FS& fs, const char* path);
 int setuip_esp_now();

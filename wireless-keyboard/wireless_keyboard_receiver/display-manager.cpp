@@ -7,6 +7,8 @@
 #include "./display-manager.h"
 
 #define ERR_DM_NO_ERR 0
+#define ERR_DM_WRITE_NO_ERR 0
+
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 32  // OLED display height, in pixels
 #define OLED_RESET -1     // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -37,18 +39,6 @@ int DisplayManager::setup()
   // Clear the buffer
   this->display->clearDisplay();
 
-  this->display->clearDisplay();
-
-  this->display->setTextSize(1);               // Normal 1:1 pixel scale
-  this->display->setTextColor(SSD1306_WHITE);  // Draw white text
-  this->display->setCursor(0, 0);              // Start at top-left corner
-  this->display->println(F("SD Card=OK ESP-NOW=OK"));
-
-  this->display->setTextSize(3);  // Draw 2X-scale text
-  this->display->setTextColor(SSD1306_WHITE);
-  this->display->print(F("WSAASAAD"));
-
-  this->display->display();
   return ERR_DM_NO_ERR;
 }
 
@@ -66,5 +56,18 @@ int DisplayManager::write_bottom_line(const char* input)
 
 int DisplayManager::write()
 {
-  return 0;
+  this->display->clearDisplay();
+
+  this->display->setTextSize(1);               // Normal 1:1 pixel scale
+  this->display->setTextColor(SSD1306_WHITE);  // Draw white text
+  this->display->setCursor(0, 0);              // Start at top-left corner
+  this->display->println(this->top_line.c_str());
+
+  this->display->setTextSize(3);  // Draw 2X-scale text
+  this->display->setTextColor(SSD1306_WHITE);
+  this->display->print(this->bottom_line.c_str());
+
+  this->display->display();
+
+  return ERR_DM_WRITE_NO_ERR;
 }
