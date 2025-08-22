@@ -9,9 +9,10 @@
 #include "../common.h"
 #include "./setup.h"
 
-#define ERR_SD_NO_SD_CARD -1
-#define ERR_SD_UNKNOWN_CARD -2
-#define ERR_SD_NO_ERR 0;
+#define ERR_SD_SETUP_NO_SD_CARD -1
+#define ERR_SD_SETUP_UNKNOWN_CARD -2
+#define ERR_SD_SETUP_BEGIN_FAILED -3
+#define ERR_SD_SETUP_NO_ERR 0;
 #define ERR_ESP_NOW_NO_ERR 0;
 #define ERR_ESP_NOW_INIT -1;
 
@@ -21,26 +22,26 @@ data_packet command;
 int setup_sd_card()
 {
   SPI.begin(SCK, MISO, MOSI, SS);
-  while (!SD.begin(SS))
+  if (!SD.begin(SS))
   {
-    Serial.println(F("Card Mount Failed"));
-    sleep(1);
+    return ERR_SD_SETUP_BEGIN_FAILED;
   }
+
   uint8_t cardType = SD.cardType();
 
   if (cardType == CARD_NONE)
   {
-    return ERR_SD_NO_SD_CARD;
+    return ERR_SD_SETUP_NO_SD_CARD;
   }
   if (cardType != CARD_SD)
   {
     Serial.printf(F("[-] UNKNOWN card type %d\n"), cardType);
-    return ERR_SD_UNKNOWN_CARD;
+    return ERR_SD_SETUP_UNKNOWN_CARD;
   }
 
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
-  return ERR_SD_NO_ERR;
+  return ERR_SD_SETUP_NO_ERR;
 }
 
 int setuip_esp_now()
