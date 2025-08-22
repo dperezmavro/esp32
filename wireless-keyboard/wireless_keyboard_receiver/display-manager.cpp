@@ -31,11 +31,6 @@ int DisplayManager::setup()
       ;  // Don't proceed, loop forever
   }
 
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  this->display->display();
-  delay(2000);  // Pause for 2 seconds
-
   // Clear the buffer
   this->display->clearDisplay();
 

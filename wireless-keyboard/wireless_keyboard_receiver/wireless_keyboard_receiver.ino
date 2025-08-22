@@ -1,5 +1,5 @@
-
 #include <SD.h>
+// #include <format>
 
 // #include <USBHID.h>
 // #include "USBHIDKeyboard.h"
@@ -22,22 +22,25 @@ void setup()
   int err_dm = dm->setup();
   if (err_dm)
   {
-    Serial.printf("[-] display manager error %d\n", err_dm);
+    Serial.printf(F("[-] display manager error %d\n"), err_dm);
   }
 
   int err_sd = setup_sd_card();
   if (err_sd)
   {
-    Serial.printf("[-] sd card error %d\n", err_sd);
+    Serial.printf(F("[-] sd card error %d\n"), err_sd);
   }
 
   int err_esp_now = setuip_esp_now();
   if (err_esp_now)
   {
-    Serial.printf("[-] esp now error: %d\n", err_esp_now);
+    Serial.printf(F("[-] esp now error: %d\n"), err_esp_now);
   }
 
-  Serial.println(F("[+] Setup complete, reading stratagems"));
+  char buffer[20];
+  sprintf(buffer, "SD: %d, ESP-NOW: %d", err_sd, err_esp_now);
+
+  dm->write_top_line(buffer);
 
   stratagems = read_file(SD, STRATAGEMS_FILE);
   sm         = new StratagemManager(stratagems);
