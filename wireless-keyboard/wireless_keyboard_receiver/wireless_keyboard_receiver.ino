@@ -16,8 +16,17 @@ void setup()
   Serial.begin(115200);
   Serial.printf(F("[*] Starting setup\n"));
 
-  setup_sd_card();
-  setuip_esp_now();
+  int err_sd = setup_sd_card();
+  if (err_sd)
+  {
+    Serial.printf("[-] sd card error %d\n", err_sd);
+  }
+
+  int err_esp_now = setuip_esp_now();
+  if (err_esp_now)
+  {
+    Serial.printf("[-] esp now error: %d\n", err_esp_now);
+  }
 
   Serial.println(F("[+] Setup complete, reading stratagems"));
 

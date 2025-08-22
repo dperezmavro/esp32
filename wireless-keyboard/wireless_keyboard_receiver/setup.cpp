@@ -9,12 +9,17 @@
 #include "../common.h"
 #include "./setup.h"
 
+#define ERR_SD_NO_SD_CARD -1
+#define ERR_SD_UNKNOWN_CARD -2
+#define ERR_SD_NO_ERR 0;
+#define ERR_ESP_NOW_NO_ERR 0;
+#define ERR_ESP_NOW_INIT -1;
+
 // data packet received
 data_packet command;
 
-void setup_sd_card()
+int setup_sd_card()
 {
-  Serial.println(F("[*] Starting SD card setup"));
   SPI.begin(SCK, MISO, MOSI, SS);
   while (!SD.begin(SS))
   {
@@ -25,35 +30,32 @@ void setup_sd_card()
 
   if (cardType == CARD_NONE)
   {
-    Serial.println(F("No SD card attached"));
-    return;
+    return ERR_SD_NO_SD_CARD;
   }
   if (cardType != CARD_SD)
   {
-    Serial.printf(F("UNKNOWN card type %d\n"), cardType);
-    return;
+    Serial.printf(F("[-] UNKNOWN card type %d\n"), cardType);
+    return ERR_SD_UNKNOWN_CARD;
   }
 
   uint64_t cardSize = SD.cardSize() / (1024 * 1024);
   Serial.printf(F("SD Card Size: %lluMB\n"), cardSize);
-  Serial.println(F("[+] Finished SD card setup"));
+  return ERR_SD_NO_ERR;
 }
 
-void setuip_esp_now()
+int setuip_esp_now()
 {
-  Serial.println(F("[*] Starting ESP-NOW setup"));
   WiFi.mode(WIFI_STA);
   WiFi.STA.begin();
 
   Serial.printf(F("MAC Address: %s\n"), WiFi.macAddress().c_str());
   if (esp_now_init() != ESP_OK)
   {
-    Serial.println(F("Error initializing ESP-NOW"));
-    return;
+    return ERR_ESP_NOW_INIT;
   }
   esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 
-  Serial.println(F("[+] Finished ESP-NOW setup"));
+  return ERR_ESP_NOW_NO_ERR;
 }
 
 // callback function that will be executed when data is received
