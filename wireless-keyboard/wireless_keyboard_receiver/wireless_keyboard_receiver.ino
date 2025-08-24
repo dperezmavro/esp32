@@ -12,6 +12,7 @@
 const char* stratagems;
 StratagemManager* sm;
 DisplayManager* dm;
+int loop_counter = 0;
 
 void setup()
 {
@@ -45,4 +46,14 @@ void setup()
 }
 
 // needs to do nothing actively
-void loop() {}
+void loop()
+{
+  loop_counter += 1;
+  loop_counter %= 4;
+  if (!loop_counter)
+  {
+    dm->write_bottom_line("");
+  }
+
+  delay(500);
+}

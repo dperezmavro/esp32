@@ -77,7 +77,7 @@ int DisplayManager::write()
           "SD: %.2d, ESP-NOW: %.2d",
           this->status_sd_card,
           this->status_esp_now);
-          
+
   this->display->println(buffer);
 
   this->display->setTextSize(3);  // Draw 2X-scale text
