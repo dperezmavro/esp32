@@ -6,6 +6,6 @@
 extern data_packet command;
 
 int setuip_esp_now();
-void send_command();
+void send_command(int btn, int toggle);
 
 #endif

@@ -12,9 +12,6 @@
 #define ERR_ESP_NOW_NO_ERR 0;
 #define ERR_ESP_NOW_INIT -1;
 
-// data packet received
-data_packet command;
-
 // receiver MAC
 uint8_t receiverMac[] = {0xB4, 0x3A, 0x45, 0xA9, 0x1C, 0x0C};
 
@@ -42,8 +39,11 @@ int setuip_esp_now()
   return ERR_ESP_NOW_NO_ERR;
 }
 
-void send_command()
+void send_command(int btn, int toggle)
 {
-  esp_now_send(receiverMac, (uint8_t*)&command, sizeof(command));
+  data_packet cmd;
+  cmd.button_number = btn;
+  cmd.pin_position  = toggle;
+  esp_now_send(receiverMac, (uint8_t*)&cmd, sizeof(command));
   delay(TRANSMISSION_INTERVAL);
 }
