@@ -2,114 +2,52 @@
   Sender is ESP8266
 */
 
-#include <ESP8266WiFi.h>
-#include <espnow.h>
+#include "./common.h"
+#include "./setup.h"
 
-// at 100 we start getting 30% transmission failures
-#define TRANSMISSION_INTERVAL 200
+#define BUTTON_PIN_1 14
+#define BUTTON_TOGGLE_1 12
 
-#define BUTTON_PIN 14
-
-// include common functionality
-// #include <../common.h>
-#ifndef LED_BUTTON_FEEDBACK
-#define LED_BUTTON_FEEDBACK 2
-#endif
-#define EXTERNAL_LED 13
-#define LED_BLINK_DURATION 250
-
-struct data_packet
-{
-  uint8_t button_number;
-  uint8_t pin_position;
-};
-
-void blink_led()
-{
-  digitalWrite(LED_BUTTON_FEEDBACK,
-               HIGH);  // turn the LED on (HIGH is the voltage level)
-  digitalWrite(EXTERNAL_LED,
-               HIGH);         // turn the LED on (HIGH is the voltage level)
-  delay(LED_BLINK_DURATION);  // wait for a second
-  digitalWrite(EXTERNAL_LED,
-               LOW);  // turn the LED off by making the voltage LOW
-}
-
-data_packet command;
-
-// receiver MAC
-uint8_t receiverMac[] = {0xB4, 0x3A, 0x45, 0xA9, 0x1C, 0x0C};
-
-// callback when data is sent
-void OnDataSent(uint8_t* mac_addr, uint8_t sendStatus)
-{
-  Serial.print("Last Packet Send Status: ");
-  Serial.println(sendStatus == 0 ? "Delivery Success" : "Delivery Fail");
-}
+#define BUTTON_PIN_2 15
+#define BUTTON_TOGGLE_2 13
 
 void setup()
 {
-  // built in led for feedback
-  pinMode(LED_BUTTON_FEEDBACK, OUTPUT);
-  pinMode(EXTERNAL_LED, OUTPUT);
-
   // serial for debugging
   Serial.begin(115200);
 
   // button setup
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_PIN_1, INPUT_PULLUP);
+  pinMode(BUTTON_TOGGLE_1, INPUT_PULLUP);
 
-  // read mac address
-  WiFi.mode(WIFI_STA);
-  WiFi.mode(WIFI_STA);
-
-  if (esp_now_init() != 0)
+  int err_esp_now = setuip_esp_now();
+  if (!err_esp_now)
   {
-    Serial.println("Error initializing ESP-NOW");
-    return;
+    Serial.printf("[-] error setting up espnow: %d\n", err_esp_now);
   }
-  esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
-  esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(receiverMac, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
-
-  // feedback to know everything booted fine
-  blink_builtin_led(100);
-  blink_builtin_led(100);
-  blink_builtin_led(100);
-  blink_builtin_led(100);
-  blink_builtin_led(100);
-  blink_builtin_led(100);
-}
-
-void blink_builtin_led(uint8_t d)
-{
-  digitalWrite(LED_BUTTON_FEEDBACK,
-               LOW);  // turn the LED on (HIGH is the voltage level)
-  delay(d);
-  digitalWrite(LED_BUTTON_FEEDBACK,
-               HIGH);  // turn the LED on (HIGH is the voltage level)
-}
-
-void send_command()
-{
-  digitalWrite(EXTERNAL_LED,
-               HIGH);  // turn the LED on (HIGH is the voltage level)
-  esp_now_send(receiverMac, (uint8_t*)&command, sizeof(command));
-  delay(TRANSMISSION_INTERVAL);
-  digitalWrite(EXTERNAL_LED,
-               LOW);  // turn the LED off by making the voltage LOW
 }
 
 void loop()
 {
-  bool switchState = digitalRead(BUTTON_PIN);  // Read switch
+  bool switchState1 = digitalRead(BUTTON_PIN_1);     // Read switch
+  bool toggleState1 = digitalRead(BUTTON_TOGGLE_1);  // Read toggle
 
-  if (switchState == LOW)
+  bool switchState2 = digitalRead(BUTTON_PIN_2);     // Read switch
+  bool toggleState2 = digitalRead(BUTTON_TOGGLE_2);  // Read toggle
+
+  if (switchState1 == LOW)
   {
-    Serial.println("clicked button");
-    // TODO (dio): populate these with real reads
-    command.button_number = 3;
-    command.pin_position  = 0;
+    Serial.printf("clicked button %d: %d\n", switchState1, toggleState1);
+    command.button_number = switchState1;
+    command.pin_position  = toggleState1;
+    send_command();
+  }
+
+  if (switchState2 == LOW)
+  {
+    Serial.printf("clicked button %d: %d\n", switchState2, toggleState2);
+    command.button_number = switchState2;
+    command.pin_position  = toggleState2;
     send_command();
   }
 }
