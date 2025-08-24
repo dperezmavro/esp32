@@ -31,6 +31,9 @@ int DisplayManager::setup()
       ;  // Don't proceed, loop forever
   }
 
+  this->status_sd_card = -9;
+  this->status_esp_now = -9;
+
   // Clear the buffer
   this->display->clearDisplay();
 
@@ -49,6 +52,18 @@ int DisplayManager::write_bottom_line(const char* input)
   return this->write();
 }
 
+int DisplayManager::set_status_esp_now(int s)
+{
+  this->status_esp_now = s;
+  return this->write();
+}
+
+int DisplayManager::set_status_sd_card(int s)
+{
+  this->status_sd_card = s;
+  return this->write();
+}
+
 int DisplayManager::write()
 {
   this->display->clearDisplay();
@@ -56,7 +71,14 @@ int DisplayManager::write()
   this->display->setTextSize(1);               // Normal 1:1 pixel scale
   this->display->setTextColor(SSD1306_WHITE);  // Draw white text
   this->display->setCursor(0, 0);              // Start at top-left corner
-  this->display->println(this->top_line.c_str());
+
+  char buffer[64];
+  sprintf(buffer,
+          "SD: %.2d, ESP-NOW: %.2d",
+          this->status_sd_card,
+          this->status_esp_now);
+          
+  this->display->println(buffer);
 
   this->display->setTextSize(3);  // Draw 2X-scale text
   this->display->setTextColor(SSD1306_WHITE);
