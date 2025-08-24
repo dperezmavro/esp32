@@ -23,22 +23,25 @@ void setup()
   if (err_dm)
   {
     Serial.printf(F("[-] display manager error %d\n"), err_dm);
+    return;
   }
 
   int err_sd = setup_sd_card();
   if (err_sd)
   {
     Serial.printf(F("[-] sd card error %d\n"), err_sd);
+    return;
   }
 
   int err_esp_now = setuip_esp_now();
   if (err_esp_now)
   {
     Serial.printf(F("[-] esp now error: %d\n"), err_esp_now);
+    return;
   }
 
   char buffer[20];
-  sprintf(buffer, "SD: %d, ESP-NOW: %d", err_sd, err_esp_now);
+  sprintf(buffer, "SD: %.2d, ESP-NOW: %.2d", err_sd, err_esp_now);
 
   dm->write_top_line(buffer);
 
