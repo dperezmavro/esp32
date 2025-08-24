@@ -32,20 +32,20 @@ void setup()
 
 void loop()
 {
-  bool button_0 = digitalRead(BUTTON_PIN_0);     // Read switch
+  bool button_0 = digitalRead(BUTTON_PIN_0);  // Read switch
   if (button_0 == LOW)
   {
     bool toggle_switch_0 = digitalRead(BUTTON_TOGGLE_0);  // Read toggle
-    
+
     Serial.printf("clicked button %d: %d\n", button_0, toggle_switch_0);
     send_command(0, toggle_switch_0);
   }
 
-  bool button_1        = digitalRead(BUTTON_PIN_1);     // Read switch
+  bool button_1 = digitalRead(BUTTON_PIN_1);  // Read switch
   if (button_1 == LOW)
   {
     bool toggle_switch_1 = digitalRead(BUTTON_TOGGLE_1);  // Read toggle
-    
+
     Serial.printf("clicked button %d: %d\n", button_1, toggle_switch_1);
     send_command(1, toggle_switch_1);
   }
