@@ -27,6 +27,8 @@ void setup()
   if (!err_esp_now)
   {
     Serial.printf("[-] error setting up espnow: %d\n", err_esp_now);
+    delay(1000);
+    err_esp_now = setuip_esp_now();
   }
 }
 
@@ -37,7 +39,7 @@ void loop()
   {
     bool toggle_switch_0 = digitalRead(BUTTON_TOGGLE_0);  // Read toggle
 
-    Serial.printf("clicked button %d: %d\n", button_0, toggle_switch_0);
+    Serial.printf("clicked button 0: %d\n", toggle_switch_0);
     send_command(0, toggle_switch_0);
   }
 
@@ -46,7 +48,7 @@ void loop()
   {
     bool toggle_switch_1 = digitalRead(BUTTON_TOGGLE_1);  // Read toggle
 
-    Serial.printf("clicked button %d: %d\n", button_1, toggle_switch_1);
+    Serial.printf("clicked button 1: %d\n", toggle_switch_1);
     send_command(1, toggle_switch_1);
   }
 }

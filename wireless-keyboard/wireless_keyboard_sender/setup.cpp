@@ -43,7 +43,7 @@ void send_command(int btn, int toggle)
 {
   data_packet cmd;
   cmd.button_number = btn;
-  cmd.pin_position = toggle;
+  cmd.pin_position  = toggle;
   esp_now_send(receiverMac, (uint8_t*)&cmd, sizeof(cmd));
   delay(TRANSMISSION_INTERVAL);
 }
