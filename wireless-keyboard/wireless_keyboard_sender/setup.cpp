@@ -1,6 +1,6 @@
-#include <ESP8266WiFi.h>
 #include <HardwareSerial.h>
-#include <espnow.h>
+#include <WiFi.h>
+#include <esp_now.h>
 
 // include common functionality
 #include "./common.h"
@@ -11,15 +11,18 @@
 
 #define ERR_ESP_NOW_NO_ERR 0;
 #define ERR_ESP_NOW_INIT -1;
+#define ERR_ESP_NOW_ADD_PEER -2;
 
 // receiver MAC
 uint8_t receiverMac[] = {0xB4, 0x3A, 0x45, 0xA9, 0x1C, 0x0C};
 
+esp_now_peer_info_t peerInfo;
+
 // callback when data is sent
-void OnDataSent(uint8_t* mac_addr, uint8_t sendStatus)
+void OnDataSent(const uint8_t* mac_addr, esp_now_send_status_t status)
 {
   Serial.print("Last Packet Send Status: ");
-  Serial.println(sendStatus == 0 ? "Delivery Success" : "Delivery Fail");
+  Serial.println(status == 0 ? "Delivery Success" : "Delivery Fail");
 }
 
 int setuip_esp_now()
@@ -32,9 +35,20 @@ int setuip_esp_now()
     Serial.println("Error initializing ESP-NOW");
     return ERR_ESP_NOW_INIT;
   }
-  esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
-  esp_now_register_send_cb(OnDataSent);
-  esp_now_add_peer(receiverMac, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
+
+  esp_now_register_send_cb((esp_now_send_cb_t)OnDataSent);
+
+  // Register peer
+  memcpy(peerInfo.peer_addr, receiverMac, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+
+  // Add peer
+  if (esp_now_add_peer(&peerInfo) != ESP_OK)
+  {
+    Serial.println("Failed to add peer");
+    return ERR_ESP_NOW_ADD_PEER;
+  }
 
   return ERR_ESP_NOW_NO_ERR;
 }

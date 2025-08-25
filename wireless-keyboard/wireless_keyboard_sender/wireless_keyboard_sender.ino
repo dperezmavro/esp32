@@ -24,7 +24,7 @@ void setup()
   pinMode(BUTTON_TOGGLE_1, INPUT_PULLUP);
 
   int err_esp_now = setuip_esp_now();
-  if (!err_esp_now)
+  if (err_esp_now)
   {
     Serial.printf("[-] error setting up espnow: %d\n", err_esp_now);
     delay(1000);
