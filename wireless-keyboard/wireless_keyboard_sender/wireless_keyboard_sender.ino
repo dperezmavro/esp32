@@ -8,8 +8,8 @@
 #define BUTTON_PIN_0 12
 #define BUTTON_TOGGLE_0 14
 
-#define BUTTON_PIN_1 4
-#define BUTTON_TOGGLE_1 5
+#define BUTTON_PIN_1 26
+#define BUTTON_TOGGLE_1 27
 
 void setup()
 {
