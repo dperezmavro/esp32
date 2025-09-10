@@ -11,6 +11,9 @@
 #define BUTTON_PIN_1 26
 #define BUTTON_TOGGLE_1 27
 
+#define BUTTON_PIN_2 32
+#define BUTTON_TOGGLE_2 33
+
 void setup()
 {
   // serial for debugging
@@ -22,6 +25,9 @@ void setup()
 
   pinMode(BUTTON_PIN_1, INPUT_PULLUP);
   pinMode(BUTTON_TOGGLE_1, INPUT_PULLUP);
+
+  pinMode(BUTTON_PIN_2, INPUT_PULLUP);
+  pinMode(BUTTON_TOGGLE_2, INPUT_PULLUP);
 
   int err_esp_now = setuip_esp_now();
   if (err_esp_now)
@@ -50,5 +56,14 @@ void loop()
 
     Serial.printf("clicked button 1: %d\n", toggle_switch_1);
     send_command(1, toggle_switch_1);
+  }
+
+  bool button_2 = digitalRead(BUTTON_PIN_2);  // Read switch
+  if (button_2 == LOW)
+  {
+    bool toggle_switch_2 = digitalRead(BUTTON_TOGGLE_2);  // Read toggle
+
+    Serial.printf("clicked button 2: %d\n", toggle_switch_2);
+    send_command(2, toggle_switch_2);
   }
 }
