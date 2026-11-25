@@ -10,17 +10,16 @@
 
 #define BUTTON_PIN 5
 
-#define DHT22_PIN 21  // ESP32 pin GPIO21 connected to DHT22 sensor
+#define DHT22_PIN 21 // ESP32 pin GPIO21 connected to DHT22 sensor
 DHT dht22(DHT22_PIN, DHT22);
 
 // object to hold sensor readings
 sensor_data readings;
 
 // receiver MAC
-uint8_t receiverMac[] = { 0x8c, 0x4f, 0x00, 0xad, 0x84, 0x3c };
+uint8_t receiverMac[] = {0x8c, 0x4f, 0x00, 0xad, 0x84, 0x3c};
 // peer information
 esp_now_peer_info_t peerInfo;
-
 
 int read_humidity() {
   // read humidity
@@ -42,7 +41,8 @@ int read_humidity() {
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("Last Packet Send Status: ");
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success"
+                                                : "Delivery Fail");
 }
 
 void setup() {
@@ -60,8 +60,7 @@ void setup() {
   WiFi.STA.begin();
 
   // read sensor information
-  dht22.begin();  // initialize the DHT22 sensor
-
+  dht22.begin(); // initialize the DHT22 sensor
 
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -72,7 +71,6 @@ void setup() {
   // Once ESPNow is successfully Init, we will register for Send CB to
   // get the status of Trasnmitted packet
   esp_now_register_send_cb(OnDataSent);
-
 
   // Register peer
   memcpy(peerInfo.peer_addr, receiverMac, 6);
@@ -92,7 +90,8 @@ void send_reading() {
     Serial.println("error reading sensor data.");
   }
 
-  esp_err_t result = esp_now_send(receiverMac, (uint8_t *)&readings, sizeof(readings));
+  esp_err_t result =
+      esp_now_send(receiverMac, (uint8_t *)&readings, sizeof(readings));
 
   if (result == ESP_OK) {
     blink_led();
@@ -104,7 +103,7 @@ void send_reading() {
 }
 
 void loop() {
-  bool switchState = digitalRead(BUTTON_PIN);  // Read switch
+  bool switchState = digitalRead(BUTTON_PIN); // Read switch
 
   if (switchState == LOW) {
     send_reading();

@@ -7,7 +7,8 @@ struct sensor_data {
 };
 
 void blink_led() {
-    digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
-    delay(LED_BLINK_DURATION);                       // wait for a second
-    digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+  digitalWrite(LED_BUILTIN,
+               HIGH);             // turn the LED on (HIGH is the voltage level)
+  delay(LED_BLINK_DURATION);      // wait for a second
+  digitalWrite(LED_BUILTIN, LOW); // turn the LED off by making the voltage LOW
 }

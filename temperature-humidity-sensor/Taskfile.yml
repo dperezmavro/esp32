@@ -1,0 +1,10 @@
+version: '3'
+tasks:
+  default:
+    cmds:
+      - task --list-all
+
+  fmt:
+    shopt: [globstar, nullglob]
+    cmds:
+      - clang-format --style=file -i **/*.h **/*.cpp

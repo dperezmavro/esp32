@@ -31,8 +31,8 @@ void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   memcpy(&readings, incomingData, sizeof(readings));
   Serial.print("Bytes received: ");
   Serial.println(len);
-  Serial.printf("Temperature: %.2f C, humidity %.2f%%\n", readings.temperature, readings.humidity);
+  Serial.printf("Temperature: %.2f C, humidity %.2f%%\n", readings.temperature,
+                readings.humidity);
 }
 
-void loop() {
-}
+void loop() {}
